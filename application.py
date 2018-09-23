@@ -108,7 +108,7 @@ def register():
 
 
         hashed_pass = generate_password_hash(password)
-        db.execute("INSERT INTO users (first_name, last_name, email, hash_password) VALUES (?, ?, ?,?)",(frist_name, last_name, email, hashed_pass))
+        db.execute("INSERT INTO users (first_name, last_name, email, hash_password) VALUES (?, ?, ?,?)",(first_name, last_name, email, hashed_pass))
         get_db().commit()
 
         return redirect("/")
