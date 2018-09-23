@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+    
+    <div class="group">
+                
+        <h4>Subjects</h4>
+        {% if message %}
+            <p>{{message}}</p>
+        {% endif %}
+        <form class="form-inline" action="" method="post">
+
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="title" class="sr-only">Add Subject</label>
+                <input type="text" name="subject" class="form-control" id="inputsubjet" placeholder="Subject">
+                <select name="semesters_list" class="form-control">
+                    <option value="select">Select Semester </option>
+                    {% for semester in semesters %}
+                    <option value="{{semester['id']}}">{{semester['title']}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Add</button>
+        </form>
+        <table class="table">
+            
+            {% for subject in subjects %}
+            <tr>
+                <th>{{subject["subject_title"] }}<small class="text-muted"> &nbsp;&nbsp;{{subject["title"]}}</small></th>
+                
+                <td><a href="{{url_for('delete', subject_id= subject['subject_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
+                <td><a href="{{url_for('update', subject_id=subject['subject_id'])}}">Edit</a></td>
+           
+            </tr>
+            {% endfor %}
+                
+        </table>
+        
+        
+    </div>
+{% endblock %}

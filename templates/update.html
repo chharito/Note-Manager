@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+   
+    <form action ="" method="post">
+        {% if datas %}
+        <div class="form-group col-md-6">
+            <input type="text" name="title" class="form-control" value="{{datas.subject_title}}" />
+        </div>
+        {% elif semester %}
+            <div class="form-group col-md-6">
+                <input type="text" name="title" class="form-control" value="{{semester['title']}}" />
+            </div>
+        {% elif assignment %}
+            <div class="form-group col-md-6">
+                <input type="text" name="title" class="form-control" value="{{assignment['assign_title']}}" />
+            </div>
+        {% endif %}
+        <div class="form-group mx-sm-3 mb-2">
+            <button type="submit" name="update" class="btn btn-primary mb-2">Update</button>
+           
+        </div>
+    </form>
+
+    
+    
+{% endblock %}

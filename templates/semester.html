@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %} Semester {% endblock %}
+
+{% block body %}
+    
+    <form action="{{url_for('semester')}}" class="form-inline" method="post">
+        <input class="form-control" type="text" name="title" placeholder="eg. Semester One" />
+        <button class="btn btn-primary" name="submit">Add</button>
+    </form>
+    <br>
+
+    
+        
+        <table class="table">
+
+            {% for data in datas %}
+            <tr>
+                <th>{{data["title"] }}</th>
+                <td><a href="{{url_for('delete', sem_id= data['id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
+                <td><a href="{{url_for('update', sem_id= data['id'])}}">Edit</a></td>
+
+
+            </tr>
+            {% endfor %}
+
+        </table>
+
+        
+    
+{% endblock %}

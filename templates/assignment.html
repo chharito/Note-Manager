@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %} Assignment {% endblock %}
+
+{% block body %}
+
+    <div class="group">
+
+        <h4>Assignments:</h4>
+        {% if message %}
+            <p>{{message}}</p>
+        {% endif %}
+        <form class="form-inline" action="" method="post">
+
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="title" class="sr-only">Add Subject</label>
+                <input type="text" name="assignment" class="form-control" id="inputsubjet" placeholder="Subject">
+                <select name="subjects_list" class="form-control">
+                    <option value="select">Select Semester </option>
+                    {% for subject in subjects %}
+                    <option value="{{subject['subject_id']}}">{{subject['subject_title']}}, <small class="text-muted">{{subject['semester_id']}}</small></option>
+                    {% endfor %}
+                </select>
+
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Add</button>
+        </form>
+        <table class="table">
+
+            {% for assignment in assignments %}
+            <tr>
+                <th>{{assignment["assign_title"] }}<small class="text-muted"> &nbsp;&nbsp;{{assignment['title']}}, {{assignment['subject_title']}}</small></th>
+                <td><a href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
+                <td><a href="{{url_for('update', assign_id= assignment['assign_id'])}}">Update</a></td>
+
+
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+{% endblock %}

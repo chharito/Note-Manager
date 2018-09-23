@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+   
+    
+    {% for semester in semesters %}
+        <li>{{semester.title}}</li>
+    {% endfor %}
+    
+    
+{% endblock %}

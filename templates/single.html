@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+       
+    
+    
+<div>
+    <ul>
+    {% for assignment in assignments %}
+        <li>{{ assignment["assign_title"]}}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}

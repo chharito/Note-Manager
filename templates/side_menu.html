@@ -1,0 +1,43 @@
+ <nav id="sidebar">
+    <div class="sidebar-header">
+        <h3><a class="side_link" href="{{url_for('index')}}">Note Manager</a></h3>
+    </div>
+
+    <ul class="list-unstyled components">
+       
+        {% for sub_sem_lists in sub_sem_list %}
+                {% for semester, subjects in sub_sem_lists.items() %}
+        <li>
+
+            <a class="side_link" href="#{{semester|replace(' ', 3 ,2)}}" data-toggle="collapse" aria-expanded="false" aria-controls="{{semester|replace(' ', 3 ,2)}}">{{semester}}</a>
+            <ul class="collapse list-unstyled" id="{{semester|replace(' ', 3 ,2)}}">
+              {% for subject in subjects %}
+                <li><a class="side_link" href="{{url_for('single', sub_id=subject['subject_id'])}}">{{subject["subject_title"]}}</a></li>
+              {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+        {% endfor %}
+        <li>
+            <a class="side_link" href="#">About</a>
+        </li>
+        <li>
+            <a class="side_link" href="#">Contact</a>
+        </li>
+        <li>
+            
+            <a class="side_link" href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Manage</a>
+            <ul class="collapse list-unstyled" id="pageSubmenu">
+                <li class="nav-item"><a class="side_link" href="/manage/semester">Semester</a></li>
+                <li class="nav-item"><a class="side_link" href="/manage/subject">Subject</a></li>
+                <li class="nav-item"><a class="side_link" href="/manage/assignment">Assignment</a></li>
+                <li class="nav-item"><a class="side_link" href="/note">Notes</a></li>
+            </ul>
+        </li>
+                
+    </ul>
+     {% if session.user_id %}
+            <div id="weather" class=""></div>
+        {% endif %}
+
+</nav>

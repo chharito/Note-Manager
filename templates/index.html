@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+       
+    
+    
+<div class="accordion" id="accordionExample">
+{% for sub_sem_lists in sub_sem_list %}
+        {% for semester, subjects in sub_sem_lists.items() %}
+  <div class="card">
+    <div class="card-header" id="heading{%if subjects %}{{subjects[0]['subject_id']}}{% endif %}">
+      <h5 class="mb-0">
+        <button class="btn btn-link" type="button" data-toggle="collapse show" data-target="#{%if subjects %}{{subjects[0]['subject_id']}}{% endif %}" aria-expanded="true" aria-controls="{%if subjects %}{{subjects[0]['subject_id']}} {% endif %}">
+          {{semester}}
+        </button>
+      </h5>
+    </div>
+      
+    <div id="{%if subjects %}{{subjects[0]['subject_id']}}{% endif %}" class="collapse show" aria-labelledby="heading{%if subjects %}{{subjects[0]['subject_id']}}{% endif %}" data-parent="#accordionExample">
+         <div class="card-body">
+        {% for subject in subjects %}
+     
+        <li><a href="{{url_for('single', sub_id = subject['subject_id'])}}">{{subject["subject_title"]}}</a></li>
+             
+        {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+    {% endfor %}
+</div>
+{% endblock %}
