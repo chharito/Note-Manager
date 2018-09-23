@@ -9,13 +9,13 @@ from helper import query_select_all, query, query_update, query_select_by_userid
 
 # run the flask app
 app = Flask(__name__)
-#app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 #Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = True
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+#app.config["SESSION_FILE_DIR"] = mkdtemp()
+#app.config["SESSION_PERMANENT"] = True
+#app.config["SESSION_TYPE"] = "filesystem"
+#Session(app)
 
 @app.context_processor
 def side_menu():
