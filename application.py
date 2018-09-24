@@ -187,13 +187,13 @@ def assignment():
 
 
     # display subjects semester and assignment
-    assignments = db.execute("""SELECT assignments.assign_id, assignments.assign_title, subjects.subject_title, semesters.title
+    assignments = db.execute("""SELECT assignments.assign_id, assignments.assign_title, DATE(assignments.due_date), subjects.subject_title, semesters.title
         FROM assignments LEFT JOIN (semesters INNER JOIN subjects ON subjects.semester_id =semesters.id) ON
         assignments.subject_id = subjects.subject_id WHERE assignments.user_id = ?""", (user_id,)).fetchall()
     semesters= db.execute("SELECT * FROM semesters WHERE user_id=?", (user_id,)).fetchall()
     subjects= db.execute("SELECT * FROM subjects WHERE user_id=?", (user_id,)).fetchall()
 
-
+    
     # add new subject to database
 
     if request.method == "POST":
@@ -210,8 +210,14 @@ def assignment():
             return render_template("assignment.html", subjects=subjects, semesters=semesters, assignments=assignments, message="Please select Subject")
 
         semester_id = db.execute("SELECT semester_id FROM subjects WHERE subject_id=?", (subject_id,)).fetchone()
+        
+        due_date = request.form.get('due_date')
+        
+        due_date = due_date.split("/")
+        due_date.reverse()
+        due_date = '-'.join(due_date)
         # save to database
-        db.execute("INSERT INTO assignments (assign_title, semester_id, subject_id, user_id) VALUES(?,?,?,?)", (title, semester_id['semester_id'], subject_id, user_id))
+        db.execute("INSERT INTO assignments (assign_title, semester_id, subject_id, user_id, due_date) VALUES(?,?,?,?,DATETIME(?))", (title, semester_id['semester_id'], subject_id, user_id, due_date))
         get_db().commit()
         return redirect("manage/assignment")
 
@@ -341,15 +347,30 @@ def logout():
     return redirect("/")
 
 @app.route("/single/<int:sub_id>")
+@login_required
 def single(sub_id):
     """display all the assignments as per subjects"""
     db = con()
-
+   
     assignments = db.execute("SELECT * FROM assignments WHERE subject_id =?",(sub_id,)).fetchall()
+    subject = db.execute("SELECT * FROM subjects WHERE subject_id =?",(sub_id,)).fetchone()
     if len(assignments) < 1:
-        return page_not_found(404)
-    return render_template("single.html", assignments=assignments)
+        
+        return render_template("single.html", message="No subject found")
+    return render_template("single.html", assignments=assignments, subject=subject)
 
+# user's detail/
+@app.route("/myaccount")
+@login_required
+def myaccount():
+    user_id = session.get("user_id")
+    db=con()
+
+    details = db.execute("SELECT first_name, last_name, email FROM users WHERE id=?", (user_id,))
+
+    return render_template('user.html', details=details)
+        
+        
 # return 404 message render 404 page
 @app.errorhandler(404)
 def page_not_found(e):

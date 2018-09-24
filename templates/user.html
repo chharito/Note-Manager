@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+
+{% for detail in details %}
+    <li>{{detail["first_name"]}} {{detail["last_name"]}}</li>
+    <li>{{detail["email"]}}</li>
+{% endfor %}
+
+{% endblock %}

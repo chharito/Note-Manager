@@ -294,7 +294,13 @@ html, body, #map-canvas, .container-fluid
     content: '\25BC';
 }
 
-
+#weather{
+    list-style: none;
+    
+}
+#weather ul li{
+    border-bottom: 1px solid white;
+}
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
@@ -347,6 +353,9 @@ a.article, a.article:hover {
     }
     #sidebarCollapse span {
         display: none;
+    }
+    .form-wrap {
+    width: 80%;
     }
 }
 

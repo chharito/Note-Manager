@@ -9,8 +9,8 @@ $(document).ready(function() {
    var a = data.query.results.channel.item.forecast;
    
     for(let i=0; i<a.length; i++){
-        $('#weather').append('<li>'+a[i]['day']+','+a[i]['high']+','+ a[i]['text'] +'</li>');
-        console.log(a[i]);
+        $('#weather').append('<ul><li>'+a[i]['day']+' , Max: '+a[i]['high']+' , '+ a[i]['text'] +'</li></ul>');
+        //console.log(a[i]);
 //        code: "30"
 //date: "20 Sep 2018"
 //day: "Thu"
@@ -39,8 +39,10 @@ $(document).ready(function() {
 $('#sidebarCollapse').on('click', function () {
                      $('#sidebar').toggleClass('active');
                  });    
-    
-    
+
+//calendar 
+
+    $('#datetimepicker1').datepicker({dateFormat: 'dd/mm/yy'});
     
 }); // close of ready document
 

@@ -7,10 +7,25 @@
     
     
 <div>
-    <ul>
-    {% for assignment in assignments %}
-        <li>{{ assignment["assign_title"]}}</li>
-    {% endfor %}
-    </ul>
+    {% if message %}
+            <p>{{message}}</p>
+    {% endif %}
+     {% if subject %}
+    <table class="table">
+           
+            <h2>{{subject["subject_title"]}}</h2>
+            {% for assignment in assignments %}
+            <tr>
+                <th>{{assignment["assign_title"] }}</th>
+                <td>{{assignment['due_date']}}</td>
+                <td><a href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
+                <td><a href="{{url_for('update', assign_id= assignment['assign_id'])}}">Update</a></td>
+
+
+            </tr>
+            {% endfor %}
+        
+        </table>
+     {% endif %}
 </div>
 {% endblock %}
