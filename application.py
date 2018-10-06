@@ -1,15 +1,20 @@
-import sqlite3
-from flask import Flask, render_template, request, g, redirect, url_for, flash, session, escape, jsonify
-from flask_session import Session
+
+from flask import Flask, render_template, request, g, redirect, url_for, flash, session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import query_select_all, query, query_update, query_select_by_userid, login_required, con, get_db, make_list
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
+from helper import query_select_all, query, query_update, query_select_by_userid, login_required, con, get_db, make_list, format_date
 
 
 # run the flask app
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.config.from_pyfile('config.cfg')
+app.secret_key =b'J \'\x11d\xa9\xbb\xca\xba\x81u\xed\x14\x9b\xaa"'
+mail = Mail(app)
+
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 #Configure session to use filesystem (instead of signed cookies)
 #app.config["SESSION_FILE_DIR"] = mkdtemp()
@@ -69,11 +74,13 @@ def login():
 
         # query email
         row = db.execute("SELECT * FROM users WHERE email =?",(email,)).fetchall()
-
+        
         # verify email and password
-        if len(row) != 1 or not check_password_hash(row[0]["hash_password"], password):
+        if len(row) != 1 or not check_password_hash(row[0] ["hash_password"], password):
             return render_template("login.html", message="Email/Password did not match")
-
+        if not row[0]['confirm_email']:
+            return render_template("login.html", message="Activate your account")
+        
         # remember user id
         session["user_id"] = row[0]["id"]
         session["user_name"]= row[0]["first_name"]
@@ -108,13 +115,36 @@ def register():
 
 
         hashed_pass = generate_password_hash(password)
-        db.execute("INSERT INTO users (first_name, last_name, email, hash_password) VALUES (?, ?, ?,?)",(first_name, last_name, email, hashed_pass))
+        db.execute("INSERT INTO users (first_name, last_name, email, hash_password, confirm_email, admin) VALUES (?, ?, ?,?, 0, 0)",(first_name, last_name, email, hashed_pass))
         get_db().commit()
+        
+        token = s.dumps(email, salt='email-confirm')
 
+        msg = Message('Confirm email', sender='presum2@gmail.com', recipients=[email])
+        link = url_for('confirm_email', token=token, _external=True)
+        msg.body = f'your link is {link}'
+
+        mail.send(msg)
         return redirect("/")
     else:
         return render_template("register.html")
-
+@app.route("/confirm_email/<token>")
+def confirm_email(token):
+    db=con()
+    
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+    except SignatureExpired:
+        return 'The Token is expired'
+    except BadTimeSignature:
+        return 'Invalid Token'
+    user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchall()
+    if len(user) != 1:
+        return "Invalid Token"
+    
+    db.execute("UPDATE users SET confirm_email =1 WHERE id =?",(user[0]['id'],))
+    get_db().commit()
+    return redirect("/login")
 
 # semester
 @app.route("/manage/semester", methods=["GET", "POST"])
@@ -283,6 +313,8 @@ def update(subject_id=None, assign_id=None, sem_id=None):
     if assign_id:
         # check semester exist in database
         assignment = db.execute("SELECT * FROM assignments WHERE assign_id=?",(assign_id,)).fetchone()
+        subjects= db.execute("SELECT * FROM subjects WHERE user_id=? and subject_id !=?", (user_id,assignment['subject_id'])).fetchall()
+        subject= db.execute("SELECT subject_id,subject_title FROM subjects WHERE subject_id=?", (assignment['subject_id'],)).fetchone()
 
         if len(assignment)<1:
             return page_not_found(404)
@@ -292,14 +324,16 @@ def update(subject_id=None, assign_id=None, sem_id=None):
             if not title:
                 flash("Assignment cannot be blanked")
                 return redirect("/manage/assignment")
-
+            subject_id = request.form.get("subjects_list")
+            due_date = request.form.get("due_date")
+            due_date = format_date(due_date)
             # save the changes into database
-            db.execute("UPDATE assignments SET assign_title=? WHERE assign_id =? and user_id =?",(title, assignment['assign_id'], user_id))
+            db.execute("UPDATE assignments SET assign_title=?, subject_id =?, due_date=DATETIME(?)  WHERE assign_id =? and user_id =?",(title, subject_id, due_date, assign_id, user_id))
             get_db().commit()
 
-            flash("Semester updated")
+            flash("Updated")
             return redirect("/manage/assignment")
-        return render_template("update.html", assignment=assignment)
+        return render_template("update.html", assignment=assignment, subjects=subjects, subject=subject)
 
 @app.route("/delete/subject/<int:subject_id>")
 @app.route("/delete/assignment/<int:assign_id>")
@@ -356,7 +390,7 @@ def single(sub_id):
     subject = db.execute("SELECT * FROM subjects WHERE subject_id =?",(sub_id,)).fetchone()
     if len(assignments) < 1:
         
-        return render_template("single.html", message="No subject found")
+        return render_template("single.html", message="No subject found", subject=subject)
     return render_template("single.html", assignments=assignments, subject=subject)
 
 # user's detail/

@@ -7,25 +7,42 @@
     
     
 <div>
+    <h3>{{subject["subject_title"]}}</h3>
     {% if message %}
             <p>{{message}}</p>
     {% endif %}
-     {% if subject %}
+    
+    
+    {% if assignments %}
+       
     <table class="table">
            
-            <h2>{{subject["subject_title"]}}</h2>
+            
+            <thead class="thead-light">
+                <tr>
+                    <th>Title</th>
+                    <th>Due Date</th>
+                    <th></th>
+                    <th></th>
+
+                </tr>
+            </thead>
             {% for assignment in assignments %}
             <tr>
                 <th>{{assignment["assign_title"] }}</th>
                 <td>{{assignment['due_date']}}</td>
                 <td><a href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
-                <td><a href="{{url_for('update', assign_id= assignment['assign_id'])}}">Update</a></td>
+                <td><a href="{{url_for('update', assign_id= assignment['assign_id'])}}">Edit</a></td>
 
 
             </tr>
             {% endfor %}
         
         </table>
+    {% else %}
+        
+        <a href="{{url_for('assignment')}}">Add Assignment</a>
      {% endif %}
+    
 </div>
 {% endblock %}

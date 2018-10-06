@@ -5,12 +5,13 @@ $(document).ready(function() {
   var city = "Sydney";
   var searchtext = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "') and u='c'";
   //change city variable dynamically as required
-  $.getJSON("https://query.yahooapis.com/v1/public/yql?q=" + searchtext + "&format=json", function(data){
+
+    $.getJSON("https://query.yahooapis.com/v1/public/yql?q=" + searchtext + "&format=json", function(data){
    var a = data.query.results.channel.item.forecast;
    
     for(let i=0; i<a.length; i++){
-        $('#weather').append('<ul><li>'+a[i]['day']+' , Max: '+a[i]['high']+' , '+ a[i]['text'] +'</li></ul>');
-        //console.log(a[i]);
+        $('#weather').append('<li>'+a[i]['day']+' , Max: '+a[i]['high']+ ', Low: '+a[i]['low']+' , '+ a[i]['text'] +'</li>');
+       
 //        code: "30"
 //date: "20 Sep 2018"
 //day: "Thu"
@@ -19,9 +20,11 @@ $(document).ready(function() {
 //text: "Partly Cloudy"
         
     }
-   //$('#weather').html("Temperature in " + city + " is " + data.query.results.channel.item.condition.temp + "°C " + data.query.results.channel.item.condition.text);
+   $('#current_weather').html("Temperature in " + city + " is " + data.query.results.channel.item.condition.temp + "°C " + data.query.results.channel.item.condition.text);
+   
   });
-        
+
+
         document.querySelectorAll(".semester").forEach(function(btn){
     
         btn.onclick = function(){
@@ -38,7 +41,7 @@ $(document).ready(function() {
     
 $('#sidebarCollapse').on('click', function () {
                      $('#sidebar').toggleClass('active');
-                 });    
+});    
 
 //calendar 
 

@@ -34,13 +34,21 @@
             <button type="submit" class="btn btn-primary mb-2 from-control">Add</button>
         </form>
         <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th>Title</th>
+                    <th>Due Date</th>
+                    <th></th>
+                    <th></th>
 
+                </tr>
+            </thead>
             {% for assignment in assignments %}
             <tr>
                 <th>{{assignment["assign_title"] }}<small class="text-muted"> &nbsp;&nbsp;{{assignment['title']}}, {{assignment['subject_title']}}</small></th>
                 <td>{{assignment['DATE(assignments.due_date)']}}</td>
                 <td><a href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
-                <td><a href="{{url_for('update', assign_id= assignment['assign_id'])}}">Update</a></td>
+                <td><a href="{{url_for('update', assign_id= assignment['assign_id'])}}">Edit</a></td>
 
 
             </tr>

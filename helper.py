@@ -86,3 +86,9 @@ def make_list(semesters):
     return n_list
 
 
+def format_date(date):
+    formated_date = date.split("/")
+    formated_date.reverse()
+    formated_date = '-'.join(formated_date)
+    return formated_date
+

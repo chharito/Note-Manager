@@ -7,6 +7,7 @@
     <form action ="" method="post">
         {% if datas %}
         <div class="form-group col-md-6">
+            <label>Title</label>
             <input type="text" name="title" class="form-control" value="{{datas.subject_title}}" />
         </div>
         {% elif semester %}
@@ -15,7 +16,22 @@
             </div>
         {% elif assignment %}
             <div class="form-group col-md-6">
+                <label>Title</label>
                 <input type="text" name="title" class="form-control" value="{{assignment['assign_title']}}" />
+                <label>Subject</label>
+                <select name="subjects_list" class="form-control">
+                    <option value="{{subject['subject_id']}}">{{subject['subject_title']}} </option>
+                    {% for subject in subjects %}
+                    <option value="{{subject['subject_id']}}">{{subject['subject_title']}}</option>
+                    {% endfor %}
+                    
+                </select>
+                <label>Due Date</label>
+                <label for="title" class="sr-only">Due date</label>
+                    <input type="text" name="due_date" class="form-control" id='datetimepicker1' autocomplete="off" value="{{assignment['due_date']}}" />
+                    <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
             </div>
         {% endif %}
         <div class="form-group mx-sm-3 mb-2">

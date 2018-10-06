@@ -4,19 +4,27 @@
     </div>
 
     <ul class="list-unstyled components">
-       
+       {% set count = namespace(i=0) %}
         {% for sub_sem_lists in sub_sem_list %}
+            
                 {% for semester, subjects in sub_sem_lists.items() %}
         <li>
-
-            <a class="side_link" href="#{{semester|replace(' ', 3 ,2)}}" data-toggle="collapse" aria-expanded="false" aria-controls="{{semester|replace(' ', 3 ,2)}}">{{semester}}</a>
-            <ul class="collapse list-unstyled" id="{{semester|replace(' ', 3 ,2)}}">
+            
+            <a class="side_link" href="#a{{count.i}}" data-toggle="collapse" aria-expanded="false" aria-controls="a{{count.i}}">{{semester}}</a>
+            <ul class="collapse list-unstyled" id="a{{count.i}}">
+               
               {% for subject in subjects %}
+               
                 <li><a class="side_link" href="{{url_for('single', sub_id=subject['subject_id'])}}">{{subject["subject_title"]}}</a></li>
+                 
               {% endfor %}
             </ul>
+            {% set count.i = count.i + 1 %}
         </li>
-        {% endfor %}
+            
+           
+            {% endfor %}
+        
         {% endfor %}
         <li>
             <a class="side_link" href="#">About</a>
@@ -37,7 +45,8 @@
                 
     </ul>
      {% if session.user_id %}
-            <div id="weather"></div>
+            <p id="current_weather"></p>
+            <ul id="weather"></ul>
         {% endif %}
 
 </nav>

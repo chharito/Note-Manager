@@ -1,5 +1,5 @@
 /* Allow map to fill viewport */
-html, body, #map-canvas, .container-fluid
+html, body
 {
     /* Height of these elements */
     height: 100%;
@@ -206,9 +206,9 @@ html, body, #map-canvas, .container-fluid
     margin-right : 20px;
 }
 .navbar {
-    padding: 15px 10px;
+    padding: 15px 20px;
     background: #fff;
-    border: none;
+    border: none !important;
     border-radius: 0;
     margin-bottom: 40px;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
@@ -233,6 +233,7 @@ html, body, #map-canvas, .container-fluid
 .wrapper {
     display: flex;
     align-items: stretch;
+    height: 100%;
 }
 
 #sidebar {
@@ -241,6 +242,8 @@ html, body, #map-canvas, .container-fluid
     background: #00126b;
     color: #fff;
     transition: all 0.3s;
+    overflow: auto;
+    height: 100%;
 }
 
 #sidebar.active {
@@ -296,10 +299,11 @@ html, body, #map-canvas, .container-fluid
 
 #weather{
     list-style: none;
-    
+    padding-left: 14px;
 }
-#weather ul li{
-    border-bottom: 1px solid white;
+#weather li{
+    border-bottom: 1px solid #aaa;
+    padding: 5px 0;
 }
 ul ul a {
     font-size: 0.9em !important;
