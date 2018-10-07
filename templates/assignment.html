@@ -25,7 +25,7 @@
                 </select>
                 
                     <label for="title" class="sr-only">Due date</label>
-                    <input type="text" name="due_date" class="form-control" id='datetimepicker1' autocomplete="off" />
+                    <input type="text" name="due_date" class="form-control" id='datetimepicker1' autocomplete="off" placeholder="Due Date"/>
                     <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -40,6 +40,7 @@
                     <th>Due Date</th>
                     <th></th>
                     <th></th>
+                    <th></th>
 
                 </tr>
             </thead>
@@ -47,13 +48,39 @@
             <tr>
                 <th>{{assignment["assign_title"] }}<small class="text-muted"> &nbsp;&nbsp;{{assignment['title']}}, {{assignment['subject_title']}}</small></th>
                 <td>{{assignment['DATE(assignments.due_date)']}}</td>
-                <td><a href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
-                <td><a href="{{url_for('update', assign_id= assignment['assign_id'])}}">Edit</a></td>
-
+                
+                
+                 <td class="table_width">
+                     <a id="assign_note" class="btn btn-info btn-sm" href="{{url_for('assignment', assign_id=assignment['assign_id'])}}" data-target=".bd-example-modal-lg" data-toggle="modal" data-assignid="{{assignment['assign_id']}}">Note</a>
+                </td>
+                <td class="table_width">
+                <a class="btn btn-success btn-sm" href="{{url_for('update', assign_id= assignment['assign_id'])}}">Edit</a>
+                </td>
+                <td class="table_width">
+                    <a class="btn btn-danger btn-sm" href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a>
+                </td>
+                
 
             </tr>
             {% endfor %}
 
         </table>
+        <!-- Modal box for note -->
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form action="{{url_for('note')}}/assignment" method ="post">
+                        <div class="modal-body">
+                            <textarea id="display_note" class="form-control" rows="10" placeholder="Your text here..." name="notes"></textarea>
+                        </div>
+                        <input id="assign_newid" type="hidden" name="assign_id" value= ""/> 
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary" name="save_note">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

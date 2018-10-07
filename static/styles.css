@@ -333,7 +333,14 @@ a.article, a.article:hover {
     color: #fff !important;
 }
 
-
+/* ---------------------------------------------------
+    Table with for button
+----------------------------------------------------- */
+.table_width{
+    width: 3%;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
 
 /* ---------------------------------------------------
     CONTENT STYLE

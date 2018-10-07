@@ -1,11 +1,11 @@
 
-from flask import Flask, render_template, request, g, redirect, url_for, flash, session
+from flask import Flask, render_template, request, g, redirect, url_for, flash, session, jsonify
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
-from helper import query_select_all, query, query_update, query_select_by_userid, login_required, con, get_db, make_list, format_date
+from helper import query_select_all, query, query_update, query_select_by_userid, login_required, login_required_admin, con, get_db, make_list, format_date
 
 
 # run the flask app
@@ -80,7 +80,9 @@ def login():
             return render_template("login.html", message="Email/Password did not match")
         if not row[0]['confirm_email']:
             return render_template("login.html", message="Activate your account")
-        
+        if row[0]['admin']:
+            session["admin_id"] = row[0]['id']
+            return redirect(url_for('admin'))
         # remember user id
         session["user_id"] = row[0]["id"]
         session["user_name"]= row[0]["first_name"]
@@ -88,6 +90,13 @@ def login():
         return redirect("/")
     else:
         return render_template("login.html")
+    
+    
+@app.route("/admin")
+@login_required_admin
+def admin():
+    return "loged in as admin"
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -200,18 +209,33 @@ def subject(semester_id=None):
 
     return render_template("subject.html", subjects=subjects, semesters=semesters)
 
-@app.route("/note")
+@app.route("/note", methods=["GET", "POST"])
+@app.route("/note/assignment", methods=["POST"])
 @login_required
 def note():
-
-
+    db = con()
+    user_id = session.get("user_id")
+    if request.method == "POST":
+        text= request.form['notes']
+        print(text)
+        assign_id = request.form['assign_id']
+        
+        note = db.execute("SELECT * FROM notes WHERE assign_id = ?", (assign_id,)).fetchall()
+        if len(note) < 1:
+            db.execute("INSERT INTO notes (note_title, user_id, assign_id) VALUES(?,?,?)", (text, user_id, assign_id))
+            get_db().commit()
+            return redirect(url_for('assignment'))
+        else:
+            db.execute("UPDATE notes SET note_title= ? WHERE assign_id =?", (text, assign_id))
+            get_db().commit()
+            return redirect(url_for('assignment'))
 
     return render_template("note.html")
 
-
+@app.route("/manage/assignment/note/<int:assign_id>")
 @app.route("/manage/assignment", methods=["GET", "POST"])
 @login_required
-def assignment():
+def assignment(assign_id=None):
     db=con()
     user_id = session.get("user_id")
 
@@ -222,7 +246,14 @@ def assignment():
         assignments.subject_id = subjects.subject_id WHERE assignments.user_id = ?""", (user_id,)).fetchall()
     semesters= db.execute("SELECT * FROM semesters WHERE user_id=?", (user_id,)).fetchall()
     subjects= db.execute("SELECT * FROM subjects WHERE user_id=?", (user_id,)).fetchall()
-
+    
+    # get method for displaying assignment note
+    if assign_id:
+        note = db.execute("SELECT * FROM notes WHERE assign_id =?", (assign_id,)).fetchone()
+        if not note:
+            return render_template("404.html")
+        
+        return jsonify(dict(note))
     
     # add new subject to database
 
@@ -250,7 +281,7 @@ def assignment():
         db.execute("INSERT INTO assignments (assign_title, semester_id, subject_id, user_id, due_date) VALUES(?,?,?,?,DATETIME(?))", (title, semester_id['semester_id'], subject_id, user_id, due_date))
         get_db().commit()
         return redirect("manage/assignment")
-
+    
 
     return render_template("assignment.html", subjects=subjects, semesters=semesters, assignments=assignments)
 

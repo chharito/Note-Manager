@@ -47,6 +47,16 @@ $('#sidebarCollapse').on('click', function () {
 
     $('#datetimepicker1').datepicker({dateFormat: 'dd/mm/yy'});
     
+    //assginment note 
+    $('#assign_note').click(function(){
+        $('#assign_newid').val($(this).data("assignid"));
+    });
+    
+    // get notes
+    $.getJSON("/manage/assignment/note/"+ $('#assign_note').data("assignid"), function(data){
+   let text = data.note_title;
+   $('#display_note').html(text);
+    });
 }); // close of ready document
 
 
