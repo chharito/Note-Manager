@@ -251,16 +251,16 @@ def assignment(assign_id=None):
     if assign_id:
         note = db.execute("SELECT * FROM notes WHERE assign_id =?", (assign_id,)).fetchone()
         if not note:
-            return render_template("404.html")
+            return jsonify({"error":"no data found"})
         
         return jsonify(dict(note))
     
     # add new subject to database
 
     if request.method == "POST":
-
+        
         title = request.form.get('assignment')
-
+        
         if not title:
             return render_template("assignment.html", subjects=subjects, semesters=semesters, assignments=assignments, message="Title cannot be blanked")
 

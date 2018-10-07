@@ -48,15 +48,38 @@ $('#sidebarCollapse').on('click', function () {
     $('#datetimepicker1').datepicker({dateFormat: 'dd/mm/yy'});
     
     //assginment note 
-    $('#assign_note').click(function(){
+    
+     
+    $('.assign_note').click(function(){
         $('#assign_newid').val($(this).data("assignid"));
+        
     });
     
+    document.querySelectorAll(".assign_note").forEach(function(btn){
+        
+        btn.onclick = function(){
+
+                
+                $.getJSON("/manage/assignment/note/"+btn.dataset.assignid, function(data){
+                    
+                    if (data.error == "no data found"){
+                        $('#display_note').html("");
+                    }else{
+                        $('#display_note').html(data.note_title);
+                    }
+                    
+                
+                    
+                });
+            };
+        });
+    
     // get notes
-    $.getJSON("/manage/assignment/note/"+ $('#assign_note').data("assignid"), function(data){
-   let text = data.note_title;
-   $('#display_note').html(text);
-    });
+//    $('#assign_note').click(function(){
+//    $.getJSON("/manage/assignment/note/"+ , function(data){
+//   let text = data.note_title;
+//   $('#display_note').html(text);
+//    }); });
 }); // close of ready document
 
 

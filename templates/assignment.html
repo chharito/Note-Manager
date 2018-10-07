@@ -51,7 +51,7 @@
                 
                 
                  <td class="table_width">
-                     <a id="assign_note" class="btn btn-info btn-sm" href="{{url_for('assignment', assign_id=assignment['assign_id'])}}" data-target=".bd-example-modal-lg" data-toggle="modal" data-assignid="{{assignment['assign_id']}}">Note</a>
+                     <a class="assign_note btn btn-info btn-sm" href="{{url_for('assignment', assign_id=assignment['assign_id'])}}" data-target=".bd-example-modal-lg" data-toggle="modal" data-assignid="{{assignment['assign_id']}}">Note</a>
                 </td>
                 <td class="table_width">
                 <a class="btn btn-success btn-sm" href="{{url_for('update', assign_id= assignment['assign_id'])}}">Edit</a>
