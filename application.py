@@ -95,7 +95,10 @@ def login():
 @app.route("/admin")
 @login_required_admin
 def admin():
-    return "loged in as admin"
+    db = con()
+    users = db.execute("SELECT * FROM users").fetchall()
+    
+    return render_template("admin.html", users=users)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -435,7 +438,8 @@ def myaccount():
 
     return render_template('user.html', details=details)
         
-        
+
+    
 # return 404 message render 404 page
 @app.errorhandler(404)
 def page_not_found(e):

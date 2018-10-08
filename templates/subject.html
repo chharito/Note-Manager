@@ -25,13 +25,21 @@
             <button type="submit" class="btn btn-primary mb-2">Add</button>
         </form>
         <table class="table">
-            
+            <thead class="thead-light">
+                <tr>
+                    <th>Title</th>
+                    <th></th>
+                    <th></th>
+
+                </tr>
+            </thead>
             {% for subject in subjects %}
             <tr>
                 <th>{{subject["subject_title"] }}<small class="text-muted"> &nbsp;&nbsp;{{subject["title"]}}</small></th>
                 
-                <td><a href="{{url_for('delete', subject_id= subject['subject_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
-                <td><a href="{{url_for('update', subject_id=subject['subject_id'])}}">Edit</a></td>
+                
+                <td class="table_width"><a class="btn btn-success btn-sm" href="{{url_for('update', subject_id=subject['subject_id'])}}">Edit</a></td>
+                <td class="table_width"><a class="btn btn-danger btn-sm" href="{{url_for('delete', subject_id= subject['subject_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
            
             </tr>
             {% endfor %}

@@ -26,7 +26,7 @@ def login_required_admin(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("admin_id") is None:
-            return redirect("/login")
+            return "403 Forbidden", 403
         return f(*args, **kwargs)
     return decorated_function
 

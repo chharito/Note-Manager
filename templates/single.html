@@ -31,8 +31,9 @@
             <tr>
                 <th>{{assignment["assign_title"] }}</th>
                 <td>{{assignment['due_date']}}</td>
-                <td><a href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
-                <td><a href="{{url_for('update', assign_id= assignment['assign_id'])}}">Edit</a></td>
+                
+                <td class="table_width"><a class="btn btn-success btn-sm" href="{{url_for('update', assign_id= assignment['assign_id'])}}">Edit</a></td>
+                <td class="table_width"><a class="btn btn-danger btn-danger btn-sm" href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a></td>
 
 
             </tr>

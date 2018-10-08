@@ -305,6 +305,9 @@ html, body
     border-bottom: 1px solid #aaa;
     padding: 5px 0;
 }
+#current_weather{
+    padding-left: 10px
+}
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
