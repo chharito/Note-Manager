@@ -42,33 +42,6 @@ def con():
     con= get_db().cursor()
     return con
 
-def query(query):
-    con = get_db().cursor()
-    row = con.execute(query).fetchall()
-
-    return row
-
-def query_update(query):
-    """update table as per query"""
-    con = get_db().cursor()
-    con.execute(query)
-    get_db().commit()
-
-def query_select_all(table_name):
-
-    con = get_db().cursor()
-
-    # select all data from users table
-    rows = con.execute("""SELECT * FROM {}""".format(table_name)).fetchall()
-    return rows
-
-def query_select_by_userid(table_name, id):
-    """ accept two parameter table name and user id """
-    con = get_db().cursor()
-
-    # select all data from users table
-    rows = con.execute("""SELECT * FROM {} WHERE id = {}""".format(table_name, id)).fetchone()
-    return rows
 
 def make_list(semesters):
     """ create new new dict of semester as key and subject as value and
@@ -100,6 +73,7 @@ def make_list(semesters):
 
 
 def format_date(date):
+    # formats the data e.g 09/10/2018 to 2018-10-09
     formated_date = date.split("/")
     formated_date.reverse()
     formated_date = '-'.join(formated_date)

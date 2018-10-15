@@ -74,12 +74,7 @@ $('#sidebarCollapse').on('click', function () {
             };
         });
     
-    // get notes
-//    $('#assign_note').click(function(){
-//    $.getJSON("/manage/assignment/note/"+ , function(data){
-//   let text = data.note_title;
-//   $('#display_note').html(text);
-//    }); });
+
 }); // close of ready document
 
 

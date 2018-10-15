@@ -5,7 +5,7 @@ from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
-from helper import query_select_all, query, query_update, query_select_by_userid, login_required, login_required_admin, con, get_db, make_list, format_date
+from helper import login_required, login_required_admin, con, get_db, make_list, format_date
 
 
 # run the flask app
@@ -45,8 +45,8 @@ def index():
     #table ="CREATE TABLE subjects (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, semester_id INTEGER, user_id INTEGER, FOREIGN KEY (user_id) REFERENCES users(id))"
 
     # select all data from users table
-    user = query(f"SELECT * FROM users WHERE id ={user_id}")
-    semesters = query(f"SELECT * FROM semesters WHERE user_id={user_id}")
+    user = db.execute("SELECT * FROM users WHERE id =?", (user_id,))
+    semesters = db.execute("SELECT * FROM semesters WHERE user_id=?", (user_id,))
 
     sub_sem_list = make_list(semesters)
     
@@ -134,7 +134,7 @@ def register():
 
         msg = Message('Confirm email', sender='presum2@gmail.com', recipients=[email])
         link = url_for('confirm_email', token=token, _external=True)
-        msg.body = f'your link is {link}'
+        msg.body = f'Thank you for signing up. Please click this link for activate your account {link}'
 
         mail.send(msg)
         return redirect("/")
@@ -376,28 +376,29 @@ def update(subject_id=None, assign_id=None, sem_id=None):
 def delete(subject_id=None, sem_id=None, assign_id=None):
 
     user_id = session.get("user_id")
-
+    db = con()
 
     if subject_id:
         #check subject empty or not
         #delete subject
-        query_update(f"DELETE FROM subjects WHERE subject_id = {subject_id} and user_id ={user_id}")
-
+        db.execute("DELETE FROM subjects WHERE subject_id = ? and user_id =?",(subject_id, user_id))
+        get_db().commit()
         flash("Item deleted")
 
         return redirect("/manage/subject")
     elif sem_id:
 
         # delete semester and its subjects
-        query_update(f"DELETE FROM subjects WHERE semester_id = {sem_id} and user_id ={user_id}")
-        query_update(f"DELETE FROM semesters WHERE id = {sem_id} and user_id ={user_id}")
-
+        db.execute("DELETE FROM subjects WHERE semester_id = ? and user_id =?",(sem_id, user_id))
+        get_db().commit()
+        db.execute("DELETE FROM semesters WHERE id = ? and user_id =?",(sem_id, user_id))
+        get_db().commit()
         flash("Item deleted")
 
         return redirect("/manage/semester")
     elif assign_id:
         # delete semester and its subjects
-        query_update(f"DELETE FROM assignments WHERE assign_id = {assign_id} and user_id ={user_id}")
+        db.execute("DELETE FROM assignments WHERE assign_id = ? and user_id =?",(assign_id, user_id))
 
 
         flash("Item deleted")
@@ -428,14 +429,35 @@ def single(sub_id):
     return render_template("single.html", assignments=assignments, subject=subject)
 
 # user's detail/
-@app.route("/myaccount")
+@app.route("/myaccount", methods=["GET", "POST"])
 @login_required
 def myaccount():
     user_id = session.get("user_id")
     db=con()
-
     details = db.execute("SELECT first_name, last_name, email FROM users WHERE id=?", (user_id,))
-
+    if request.method == "POST":
+        reset_password = request.form.get('reset_password');
+        if not reset_password:
+            return render_template('user.html', details=details, message="Password cannot be empty.")
+        
+        confirm_reset_password = request.form['confirm_reset_password']
+        if not confirm_reset_password:
+            return render_template('user.html', details=details, message="Confirm field cannot be empty.")
+        
+        if reset_password != confirm_reset_password:
+            return render_template('user.html', details=details, message="Password does not match.")
+        hash_password = generate_password_hash(confirm_reset_password)
+        
+        success = db.execute("UPDATE users SET hash_password=? WHERE id=?",(hash_password, user_id)).rowcount
+        get_db().commit();
+        
+        if success:
+            flash("Password updated!")
+            return redirect("/myaccount")
+        else:
+            flash("Error: Password could not updated!")
+            return redirect("/myaccount")
+    
     return render_template('user.html', details=details)
         
 

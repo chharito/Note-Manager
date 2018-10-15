@@ -15,7 +15,7 @@
 
             <div class="form-group mx-sm-3 mb-2">
                 <label for="title" class="sr-only">Add Subject</label>
-                <input type="text" name="assignment" class="form-control" id="inputsubjet" placeholder="Subject">
+                <input type="text" name="assignment" class="form-control" id="inputsubjet" placeholder="Assignment">
                 <select name="subjects_list" class="form-control">
                     <option value="select">Select Subject </option>
                     {% for subject in subjects %}
@@ -57,7 +57,7 @@
                 <a class="btn btn-success btn-sm" href="{{url_for('update', assign_id= assignment['assign_id'])}}">Edit</a>
                 </td>
                 <td class="table_width">
-                    <a class="btn btn-danger btn-sm" href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure?');">Delete</a>
+                    <a class="btn btn-danger btn-sm" href="{{url_for('delete', assign_id= assignment['assign_id'])}}" onClick="return confirm('Are you sure? You want to delete');">Delete</a>
                 </td>
                 
 
