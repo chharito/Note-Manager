@@ -399,6 +399,7 @@ def delete(subject_id=None, sem_id=None, assign_id=None):
     elif assign_id:
         # delete semester and its subjects
         db.execute("DELETE FROM assignments WHERE assign_id = ? and user_id =?",(assign_id, user_id))
+        get_db().commit()
 
 
         flash("Item deleted")
