@@ -20,7 +20,7 @@ $(document).ready(function() {
 //text: "Partly Cloudy"
         
     }
-   $('#current_weather').html("Temperature in " + city + " is " + data.query.results.channel.item.condition.temp + "°C " + data.query.results.channel.item.condition.text);
+   $('#current_weather').html("Current " + data.query.results.channel.item.condition.temp + "°C " + data.query.results.channel.item.condition.text);
    
   });
 
